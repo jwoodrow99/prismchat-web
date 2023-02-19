@@ -5,9 +5,20 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 
+import { messageUtils } from './Services/messageUtils';
+
+// Main setup process
+(async function () {
+	await messageUtils.pull();
+	setInterval(async () => {
+		await messageUtils.pull();
+	}, 10000);
+})();
+
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
 );
+
 root.render(
 	<React.StrictMode>
 		<BrowserRouter>

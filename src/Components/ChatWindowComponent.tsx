@@ -1,14 +1,110 @@
 import { useEffect, useState } from 'react';
+import { Prism } from 'prismchat-lib';
+import { db } from '../Services/db';
+import api from '../Services/api';
 
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
 
 // import styles from './AboutPage.module.css';
 
-const ChatWindowComponent: any = () => {
-	const [message, setMessage] = useState('');
+const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
+	const [newMessageText, setNewMessageText] = useState('');
+	const [chatMessages, setChatMessages] = useState([]);
+
+	useEffect(() => {
+		(async function () {
+			if (selectedChat) {
+				let messageQuery: any = await db.message
+					.where('pubkey')
+					.equals(selectedChat.pubkey)
+					.limit(50)
+					.offset(0)
+					.reverse()
+					.sortBy('date');
+
+				setChatMessages(messageQuery.reverse());
+			}
+		})();
+	});
+
+	const sendMessage = async (message: any) => {
+		const identityKeysCheck: any = await db.general
+			.where('name')
+			.equals('IdentityKeys')
+			.first();
+		const prism: any = new Prism(
+			identityKeysCheck.value.public,
+			identityKeysCheck.value.private
+		);
+		await prism.init();
+		console.log(`New Message: ${message}`);
+
+		// Perform Encryption
+		let layer1Up = prism.prismEncrypt_Layer1(
+			{
+				message: message,
+			},
+			selectedChat.sendKey
+		);
+		let layer2Up = prism.prismEncrypt_Layer2(
+			'M',
+			selectedChat.sendCount + 1,
+			layer1Up.nonce,
+			layer1Up.cypherText,
+			selectedChat.pubkey
+		);
+		let layer3Up = prism.prismEncrypt_Layer3(
+			layer2Up.nonce,
+			layer2Up.cypherText
+		);
+		let encryptedData = prism.prismEncrypt_Layer4(
+			layer3Up.key,
+			layer3Up.nonce,
+			layer3Up.cypherText,
+			selectedChat.pubkey
+		);
+
+		console.log(encryptedData);
+
+		// Send and save Message
+		await api.post('/message', {
+			to: selectedChat.pubkey,
+			data: encryptedData,
+		});
+
+		await db.message.add({
+			pubkey: selectedChat.pubkey,
+			date: Date.now(),
+			type: 'M',
+			data: message,
+			sent: true,
+		});
+
+		// Update chat to increase count and modify send key
+		let derivedSenKey = prism.sessionKeyDerivation(
+			selectedChat.sendKey,
+			selectedChat.sendCount + 1
+		);
+		await db.chat.update(selectedChat.pubkey, {
+			sendCount: selectedChat.sendCount + 1,
+			sendKey: derivedSenKey,
+		});
+
+		let updatedChatRecord: any = await db.chat
+			.where('pubkey')
+			.equals(selectedChat.pubkey)
+			.first();
+		setSelectedChat(updatedChatRecord);
+
+		// await api.post('/message', {
+		// 	to: selectedChat.pubkey,
+		// 	data: encryptedData,
+		// });
+	};
 
 	return (
 		<div className="ChatWindowComponent">
@@ -20,7 +116,19 @@ const ChatWindowComponent: any = () => {
 							height: '90vh',
 							outline: '1px solid grey',
 						}}
-					></Box>
+					>
+						{/* <Stack spacing={2}>
+							{chatMessages?.map((message: any) => (
+								<p key={message.id}>{message.data}</p>
+							))}
+						</Stack> */}
+
+						<ul>
+							{chatMessages?.map((message: any) => (
+								<li key={message.id}>{message.data}</li>
+							))}
+						</ul>
+					</Box>
 				</Grid>
 				<Grid item xs={12}>
 					<Box
@@ -38,9 +146,15 @@ const ChatWindowComponent: any = () => {
 									fullWidth
 									variant="outlined"
 									size="small"
-									value={message}
+									value={newMessageText}
+									onKeyPress={(event) => {
+										if (event.key === 'Enter') {
+											sendMessage(newMessageText);
+											setNewMessageText('');
+										}
+									}}
 									onChange={(event: any) => {
-										setMessage(event.target.value);
+										setNewMessageText(event.target.value);
 									}}
 								/>
 							</Grid>
@@ -49,8 +163,8 @@ const ChatWindowComponent: any = () => {
 									fullWidth
 									variant="contained"
 									onClick={() => {
-										console.log(message);
-										setMessage('');
+										sendMessage(newMessageText);
+										setNewMessageText('');
 									}}
 								>
 									Send

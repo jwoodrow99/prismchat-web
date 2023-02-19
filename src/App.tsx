@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Routes, Route, Link } from 'react-router-dom'; // Routes, Route, useNavigate, Link
 import { Prism } from 'prismchat-lib';
 import { db } from './Services/db';
+import { messageUtils } from './Services/messageUtils';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -34,6 +35,7 @@ function App() {
 			if (identityKeysCheck === undefined) {
 				setOpenSetup(true);
 			} else {
+				messageUtils.pull();
 				setSnackbarOpen(true);
 				setIdentityPublickey(identityKeysCheck.value.public);
 				console.log(identityKeysCheck.value);
@@ -53,68 +55,57 @@ function App() {
 		});
 
 		setIdentityPublickey(newlyGeneratedIdentityKeys.public);
-
 		setOpenSetup(false);
-	};
-
-	const cancelAccountCreation = () => {
-		console.log('Cancel Creation');
-		setOpenSetup(false);
-	};
-
-	const handleSnackbarClose = () => {
-		setSnackbarOpen(false);
 	};
 
 	return (
 		<div className="App">
-			{/* <h1>Prism Chat Web</h1> */}
-
-			{/* <nav>
-				<ul>
-					<li>
-						<Link to={'/'}>Home</Link>
-					</li>
-					<li>
-						<Link to={'/about'}>About</Link>
-					</li>
-				</ul>
-			</nav> */}
-
+			{/* Create account popup */}
 			<Dialog open={openSetup}>
 				<DialogTitle>Setup</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
 						We did not find any Prism keys in this browser. Do we have your
-						permission to generate keys for you to start using the Prism Cat
+						permission to generate keys for you to start using the Prism Chat
 						service?
+					</DialogContentText>
+					<DialogContentText>
+						<b>This application is for demonstration purposes ONLY!</b>
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={createNewAccount}>Agree</Button>
-					<Button onClick={cancelAccountCreation}>Cancel</Button>
+					<Button
+						color="error"
+						onClick={() => {
+							setOpenSetup(false);
+						}}
+					>
+						Cancel
+					</Button>
 				</DialogActions>
 			</Dialog>
 
+			{/* Keys found alert */}
 			<Snackbar
 				anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
 				open={snackbarOpen}
-				onClose={handleSnackbarClose}
+				onClose={() => {
+					setSnackbarOpen(false);
+				}}
 				autoHideDuration={5000}
 			>
-				<Alert onClose={handleSnackbarClose} severity="success">
+				<Alert
+					onClose={() => {
+						setSnackbarOpen(false);
+					}}
+					severity="success"
+				>
 					Prism session detected!
 				</Alert>
 			</Snackbar>
 
-			{/* <Snackbar
-				open={snackbarOpen}
-				autoHideDuration={5000}
-				onClose={handleClose}
-				message="Note archived"
-				action={action}
-			/> */}
-
+			{/* Route pages */}
 			<Routes>
 				<Route path="/" element={<HomePage />} />
 				<Route path="/about" element={<LoginPage />} />
