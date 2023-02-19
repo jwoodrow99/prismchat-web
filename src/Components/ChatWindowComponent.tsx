@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Prism } from 'prismchat-lib';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../Services/db';
 import api from '../Services/api';
 
@@ -15,6 +16,19 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 	const [newMessageText, setNewMessageText] = useState('');
 	const [chatMessages, setChatMessages] = useState([]);
 
+	useLiveQuery(async () => {
+		if (selectedChat) {
+			let messageQuery: any = await db.message
+				.where('pubkey')
+				.equals(selectedChat.pubkey)
+				.limit(50)
+				.offset(0)
+				.reverse()
+				.sortBy('date');
+			setChatMessages(messageQuery.reverse());
+		}
+	});
+
 	useEffect(() => {
 		(async function () {
 			if (selectedChat) {
@@ -25,11 +39,10 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 					.offset(0)
 					.reverse()
 					.sortBy('date');
-
 				setChatMessages(messageQuery.reverse());
 			}
 		})();
-	});
+	}, [selectedChat]);
 
 	const sendMessage = async (message: any) => {
 		const identityKeysCheck: any = await db.general
@@ -99,37 +112,69 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 			.equals(selectedChat.pubkey)
 			.first();
 		setSelectedChat(updatedChatRecord);
-
-		// await api.post('/message', {
-		// 	to: selectedChat.pubkey,
-		// 	data: encryptedData,
-		// });
 	};
 
 	return (
 		<div className="ChatWindowComponent">
 			<Grid container spacing={0}>
+				{/* Show messages */}
 				<Grid item xs={12}>
-					<Box
+					{/* <Box
 						sx={{
 							width: '100%',
 							height: '90vh',
 							outline: '1px solid grey',
 						}}
+						justifyContent="flex-end"
+						alignItems="flex-end"
+					> */}
+					<Stack
+						sx={{
+							width: '100%',
+							height: '90vh',
+							outline: '1px solid grey',
+						}}
+						justifyContent="flex-end"
 					>
-						{/* <Stack spacing={2}>
-							{chatMessages?.map((message: any) => (
-								<p key={message.id}>{message.data}</p>
-							))}
-						</Stack> */}
-
-						<ul>
-							{chatMessages?.map((message: any) => (
-								<li key={message.id}>{message.data}</li>
-							))}
-						</ul>
-					</Box>
+						{chatMessages?.map((message: any) => {
+							if (message.sent) {
+								return (
+									<Box
+										key={message.id}
+										sx={{
+											backgroundColor: 'DodgerBlue',
+											color: 'white',
+											borderRadius: '10px',
+											margin: '0px 10px 10px 100px',
+											padding: '12px 30px',
+											width: 'auto',
+										}}
+									>
+										{message.data}
+									</Box>
+								);
+							} else {
+								return (
+									<Box
+										key={message.id}
+										sx={{
+											backgroundColor: 'Gainsboro',
+											color: 'black',
+											borderRadius: '10px',
+											margin: '0px 100px 10px 10px',
+											padding: '10px 30px',
+										}}
+									>
+										{message.data}
+									</Box>
+								);
+							}
+						})}
+					</Stack>
+					{/* </Box> */}
 				</Grid>
+
+				{/* Message sending */}
 				<Grid item xs={12}>
 					<Box
 						sx={{

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Prism } from 'prismchat-lib';
 import api from '../Services/api';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../Services/db';
 
 import Box from '@mui/material/Box';
@@ -25,13 +26,17 @@ import Typography from '@mui/material/Typography';
 const ChatSessionListComponent: any = ({
 	selectedChat,
 	setSelectedChat,
-	chats,
-	setChats,
 }: any) => {
 	const [openNewChat, setOpenNewChat] = useState(false);
 	const [newChatRecipient, setNewChatRecipient] = useState('');
 
-	useEffect(() => {});
+	const chats: any = useLiveQuery(async () => {
+		return await db.chat.toArray();
+	});
+
+	useEffect(() => {
+		console.log('List Refresh');
+	});
 
 	const startNewChat = async (recipientPublicKey: string) => {
 		const identityKeysCheck: any = await db.general

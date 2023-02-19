@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../Services/db';
 
 import Grid from '@mui/material/Grid';
@@ -9,16 +10,19 @@ import ChatWindowComponent from '../Components/ChatWindowComponent';
 // import styles from './HomePage.module.css';
 
 const HomePage: any = () => {
-	const [selectedChat, setSelectedChat] = useState(null);
-	const [chats, setChats]: any = useState([]);
+	const [selectedChat, setSelectedChat]: any = useState(null);
+
+	useLiveQuery(async () => {
+		let chatQuery = await db.chat.toArray();
+		setSelectedChat(chatQuery[0]);
+		return chatQuery;
+	});
 
 	useEffect(() => {
 		(async function () {
-			let chatsQuery: any = await db.chat.toArray();
-			setChats(chatsQuery);
-			setSelectedChat(chatsQuery[0]);
+			console.log('Home Refresh');
 		})();
-	}, []);
+	});
 
 	return (
 		<div className="HomePage">
@@ -27,8 +31,6 @@ const HomePage: any = () => {
 					<ChatSessionListComponent
 						selectedChat={selectedChat}
 						setSelectedChat={setSelectedChat}
-						chats={chats}
-						setChats={setChats}
 					/>
 				</Grid>
 				<Grid item xs={9}>
