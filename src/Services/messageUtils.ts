@@ -17,7 +17,7 @@ const pull = async () => {
 
 		const newChats = await api.get('/message', {
 			headers: {
-				pub_id: identityKeys.value.public,
+				'X-Pub-Id': identityKeys.value.public,
 			},
 		});
 
