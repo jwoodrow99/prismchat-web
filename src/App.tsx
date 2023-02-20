@@ -4,7 +4,13 @@ import { Prism } from 'prismchat-lib';
 import { db } from './Services/db';
 import { messageUtils } from './Services/messageUtils';
 
+import Box from '@mui/material/Box';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -38,7 +44,6 @@ function App() {
 				messageUtils.pull();
 				setSnackbarOpen(true);
 				setIdentityPublickey(identityKeysCheck.value.public);
-				console.log(identityKeysCheck.value);
 			}
 		})();
 	}, [identityPublicKey]);
@@ -60,56 +65,81 @@ function App() {
 
 	return (
 		<div className="App">
-			{/* Create account popup */}
-			<Dialog open={openSetup}>
-				<DialogTitle>Setup</DialogTitle>
-				<DialogContent>
-					<DialogContentText>
-						We did not find any Prism keys in this browser. Do we have your
-						permission to generate keys for you to start using the Prism Chat
-						service?
-					</DialogContentText>
-					<DialogContentText>
-						<b>This application is for demonstration purposes ONLY!</b>
-					</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={createNewAccount}>Agree</Button>
-					<Button
-						color="error"
-						onClick={() => {
-							setOpenSetup(false);
-						}}
-					>
-						Cancel
-					</Button>
-				</DialogActions>
-			</Dialog>
-
-			{/* Keys found alert */}
-			<Snackbar
-				anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-				open={snackbarOpen}
-				onClose={() => {
-					setSnackbarOpen(false);
+			<Box
+				sx={{
+					maxHeight: '100vh',
 				}}
-				autoHideDuration={5000}
 			>
-				<Alert
+				<AppBar position="static" sx={{ height: '64px' }}>
+					<Toolbar>
+						<IconButton
+							size="large"
+							edge="start"
+							color="inherit"
+							aria-label="menu"
+							sx={{ mr: 2 }}
+						>
+							<MenuIcon />
+						</IconButton>
+						<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+							Prism Chat Web
+						</Typography>
+						<div>{identityPublicKey}</div>
+						{/* <Button color="inherit">Login</Button> */}
+					</Toolbar>
+				</AppBar>
+
+				{/* Create account popup */}
+				<Dialog open={openSetup}>
+					<DialogTitle>Setup</DialogTitle>
+					<DialogContent>
+						<DialogContentText>
+							We did not find any Prism keys in this browser. Do we have your
+							permission to generate keys for you to start using the Prism Chat
+							service?
+						</DialogContentText>
+						<DialogContentText>
+							<b>This application is for demonstration purposes ONLY!</b>
+						</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={createNewAccount}>Agree</Button>
+						<Button
+							color="error"
+							onClick={() => {
+								setOpenSetup(false);
+							}}
+						>
+							Cancel
+						</Button>
+					</DialogActions>
+				</Dialog>
+
+				{/* Keys found alert */}
+				<Snackbar
+					anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+					open={snackbarOpen}
 					onClose={() => {
 						setSnackbarOpen(false);
 					}}
-					severity="success"
+					autoHideDuration={5000}
 				>
-					Prism session detected!
-				</Alert>
-			</Snackbar>
+					<Alert
+						onClose={() => {
+							setSnackbarOpen(false);
+						}}
+						severity="success"
+					>
+						Prism session detected!
+					</Alert>
+				</Snackbar>
 
-			{/* Route pages */}
-			<Routes>
-				<Route path="/" element={<HomePage />} />
-				<Route path="/about" element={<LoginPage />} />
-			</Routes>
+				{/* Route pages */}
+				<Routes>
+					<Route path="/" element={<HomePage />} />
+					<Route path="/about" element={<LoginPage />} />
+				</Routes>
+			</Box>
 		</div>
 	);
 }

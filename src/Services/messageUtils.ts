@@ -153,29 +153,30 @@ const processMessage_M = async (from: string, data: any) => {
 		// Logic Here
 		let chatRecord: any = await db.chat.where('pubkey').equals(from).first();
 
-		let decryptedData = prism.prismDecrypt_Layer1(
-			data.nonce,
-			data.cypherText,
-			chatRecord.receiveKey
-		);
-
-		await db.message.add({
-			pubkey: chatRecord.pubkey,
-			date: Date.now(),
-			type: 'M',
-			data: decryptedData.message,
-			sent: false,
-		});
-
 		// Update chat to increase count and modify send key
 		let derivedReceiveKey = prism.sessionKeyDerivation(
 			chatRecord.receiveKey,
 			data.count
 		);
-		await db.chat.update(chatRecord.pubkey, {
-			receiveKey: derivedReceiveKey,
+
+		let decryptedData = prism.prismDecrypt_Layer1(
+			data.nonce,
+			data.cypherText,
+			derivedReceiveKey
+		);
+
+		await db.message.add({
+			pubkey: chatRecord.pubkey,
+			date: data.date,
+			type: 'M',
+			data: decryptedData.message,
+			sent: false,
 		});
-		console.log(decryptedData);
+
+		console.log('New Message Received: ', {
+			from: from,
+			message: decryptedData.message,
+		});
 	}
 };
 

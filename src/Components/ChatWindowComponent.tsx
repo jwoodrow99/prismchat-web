@@ -14,20 +14,7 @@ import Stack from '@mui/material/Stack';
 
 const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 	const [newMessageText, setNewMessageText] = useState('');
-	const [chatMessages, setChatMessages] = useState([]);
-
-	useLiveQuery(async () => {
-		if (selectedChat) {
-			let messageQuery: any = await db.message
-				.where('pubkey')
-				.equals(selectedChat.pubkey)
-				.limit(50)
-				.offset(0)
-				.reverse()
-				.sortBy('date');
-			setChatMessages(messageQuery.reverse());
-		}
-	});
+	const [chatMessages, setChatMessages]: any = useState([]);
 
 	useEffect(() => {
 		(async function () {
@@ -40,9 +27,10 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 					.reverse()
 					.sortBy('date');
 				setChatMessages(messageQuery.reverse());
+				scrollToBottom();
 			}
 		})();
-	}, [selectedChat]);
+	});
 
 	const sendMessage = async (message: any) => {
 		const identityKeysCheck: any = await db.general
@@ -54,14 +42,22 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 			identityKeysCheck.value.private
 		);
 		await prism.init();
-		console.log(`New Message: ${message}`);
+
+		// Update chat to increase count and modify send key
+		let derivedSenKey = prism.sessionKeyDerivation(
+			selectedChat.sendKey,
+			selectedChat.sendCount + 1
+		);
+		await db.chat.update(selectedChat.pubkey, {
+			sendCount: selectedChat.sendCount + 1,
+		});
 
 		// Perform Encryption
 		let layer1Up = prism.prismEncrypt_Layer1(
 			{
 				message: message,
 			},
-			selectedChat.sendKey
+			derivedSenKey
 		);
 		let layer2Up = prism.prismEncrypt_Layer2(
 			'M',
@@ -81,8 +77,6 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 			selectedChat.pubkey
 		);
 
-		console.log(encryptedData);
-
 		// Send and save Message
 		await api.post('/message', {
 			to: selectedChat.pubkey,
@@ -97,21 +91,23 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 			sent: true,
 		});
 
-		// Update chat to increase count and modify send key
-		let derivedSenKey = prism.sessionKeyDerivation(
-			selectedChat.sendKey,
-			selectedChat.sendCount + 1
-		);
-		await db.chat.update(selectedChat.pubkey, {
-			sendCount: selectedChat.sendCount + 1,
-			sendKey: derivedSenKey,
-		});
-
 		let updatedChatRecord: any = await db.chat
 			.where('pubkey')
 			.equals(selectedChat.pubkey)
 			.first();
+
+		console.log('New Message Sent: ', {
+			to: selectedChat.pubkey,
+			message: message,
+			encryptedData: encryptedData,
+		});
+
 		setSelectedChat(updatedChatRecord);
+	};
+
+	const scrollToBottom = () => {
+		let scrollingElement: any = document.querySelector('#messageBody');
+		scrollingElement.scrollTop = scrollingElement.scrollHeight;
 	};
 
 	return (
@@ -119,59 +115,59 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 			<Grid container spacing={0}>
 				{/* Show messages */}
 				<Grid item xs={12}>
-					{/* <Box
+					<Box
+						id="messageBody"
 						sx={{
 							width: '100%',
-							height: '90vh',
-							outline: '1px solid grey',
+							height: 'calc(100vh - 40px - 64px)',
+							overflow: 'auto',
 						}}
 						justifyContent="flex-end"
 						alignItems="flex-end"
-					> */}
-					<Stack
-						sx={{
-							width: '100%',
-							height: '90vh',
-							outline: '1px solid grey',
-						}}
-						justifyContent="flex-end"
 					>
-						{chatMessages?.map((message: any) => {
-							if (message.sent) {
-								return (
-									<Box
-										key={message.id}
-										sx={{
-											backgroundColor: 'DodgerBlue',
-											color: 'white',
-											borderRadius: '10px',
-											margin: '0px 10px 10px 100px',
-											padding: '12px 30px',
-											width: 'auto',
-										}}
-									>
-										{message.data}
-									</Box>
-								);
-							} else {
-								return (
-									<Box
-										key={message.id}
-										sx={{
-											backgroundColor: 'Gainsboro',
-											color: 'black',
-											borderRadius: '10px',
-											margin: '0px 100px 10px 10px',
-											padding: '10px 30px',
-										}}
-									>
-										{message.data}
-									</Box>
-								);
-							}
-						})}
-					</Stack>
-					{/* </Box> */}
+						<Stack
+							sx={{
+								width: '100%',
+								overflowY: 'hidden',
+							}}
+							justifyContent="flex-end"
+						>
+							{chatMessages?.map((message: any) => {
+								if (message.sent) {
+									return (
+										<Box
+											key={message.id}
+											sx={{
+												backgroundColor: 'DodgerBlue',
+												color: 'white',
+												borderRadius: '10px',
+												margin: '0px 10px 10px 100px',
+												padding: '12px 30px',
+												width: 'auto',
+											}}
+										>
+											{message.data}
+										</Box>
+									);
+								} else {
+									return (
+										<Box
+											key={message.id}
+											sx={{
+												backgroundColor: 'Gainsboro',
+												color: 'black',
+												borderRadius: '10px',
+												margin: '0px 100px 10px 10px',
+												padding: '10px 30px',
+											}}
+										>
+											{message.data}
+										</Box>
+									);
+								}
+							})}
+						</Stack>
+					</Box>
 				</Grid>
 
 				{/* Message sending */}
@@ -179,8 +175,7 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 					<Box
 						sx={{
 							width: '100%',
-							height: '10vh',
-							outline: '1px solid grey',
+							height: '40px',
 							display: 'flex',
 							justifyContent: 'center',
 						}}

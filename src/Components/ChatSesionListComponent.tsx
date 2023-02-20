@@ -34,9 +34,7 @@ const ChatSessionListComponent: any = ({
 		return await db.chat.toArray();
 	});
 
-	useEffect(() => {
-		console.log('List Refresh');
-	});
+	useEffect(() => {});
 
 	const startNewChat = async (recipientPublicKey: string) => {
 		const identityKeysCheck: any = await db.general
@@ -96,38 +94,49 @@ const ChatSessionListComponent: any = ({
 
 	return (
 		<div className="ChatSessionListComponent">
-			<Button
-				variant="contained"
-				onClick={() => {
-					setOpenNewChat(true);
+			<Box
+				sx={{
+					width: '100%',
+					height: 'calc(100vh - 64px)',
+					outline: '1px solid grey',
+					overflow: 'auto',
 				}}
+				justifyContent="flex-end"
+				alignItems="flex-end"
 			>
-				New Chat
-			</Button>
+				<Button
+					variant="contained"
+					onClick={() => {
+						setOpenNewChat(true);
+					}}
+				>
+					New Chat
+				</Button>
 
-			<List dense={true}>
-				{chats?.map((chat: any) => (
-					<ListItemButton
-						selected={selectedChat.pubkey === chat.pubkey ? true : false}
-						key={chat.pubkey}
-						onClick={() => {
-							selectChat(chat.pubkey);
-						}}
-					>
-						<ListItemAvatar>
-							<Avatar>
-								<ChatIcon />
-							</Avatar>
-						</ListItemAvatar>
-						<ListItemText>
-							<Typography sx={{ whiteSpace: 'normal' }}>
-								{chat.pubkey.substring(0, 10) + '...'}
-							</Typography>
-						</ListItemText>
-					</ListItemButton>
-				))}
-			</List>
-
+				<List dense={true}>
+					{chats?.map((chat: any) => (
+						<ListItemButton
+							selected={selectedChat.pubkey === chat.pubkey ? true : false}
+							key={chat.pubkey}
+							onClick={() => {
+								selectChat(chat.pubkey);
+							}}
+						>
+							<ListItemAvatar>
+								<Avatar>
+									<ChatIcon />
+								</Avatar>
+							</ListItemAvatar>
+							<ListItemText>
+								<Typography sx={{ whiteSpace: 'normal' }}>
+									{chat.pubkey.substring(0, 10) + '...'}
+								</Typography>
+							</ListItemText>
+						</ListItemButton>
+					))}
+				</List>
+			</Box>
+			{/* new Chat Window */}
 			<Dialog open={openNewChat}>
 				<DialogTitle>New Chat</DialogTitle>
 				<DialogContent>

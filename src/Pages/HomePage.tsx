@@ -2,6 +2,13 @@ import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../Services/db';
 
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
 import ChatSessionListComponent from '../Components/ChatSesionListComponent';
@@ -18,11 +25,10 @@ const HomePage: any = () => {
 		return chatQuery;
 	});
 
+	// Use Effect hook
 	useEffect(() => {
-		(async function () {
-			console.log('Home Refresh');
-		})();
-	});
+		(async function () {})();
+	}, []);
 
 	return (
 		<div className="HomePage">
