@@ -10,6 +10,7 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 
 import ChatSessionListComponent from '../Components/ChatSesionListComponent';
+import ChatRequestListComponent from '../Components/ChatRequestListComponent';
 import ChatWindowComponent from '../Components/ChatWindowComponent';
 
 // import styles from './HomePage.module.css';
@@ -73,7 +74,7 @@ const HomePage: any = () => {
 									padding: '10px 0px 0px 0px',
 								}}
 							>
-								Requests
+								<ChatRequestListComponent />
 							</TabPanel>
 						</TabContext>
 					</Box>

@@ -11,8 +11,10 @@ import Avatar from '@mui/material/Avatar';
 import ChatIcon from '@mui/icons-material/Chat';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
 
 import NewChatDialogueComponent from './NewChatDialogueComponent';
+import GeneralNotificationComponent from './GeneralNotificationComponent';
 
 // import styles from './AboutPage.module.css';
 
@@ -21,6 +23,7 @@ const ChatSessionListComponent: any = ({
 	setSelectedChat,
 }: any) => {
 	const [openNewChat, setOpenNewChat] = useState(false);
+	const [errorChat, setErrorChat] = useState(false);
 
 	const chats: any = useLiveQuery(async () => {
 		return await db.chat.toArray();
@@ -31,7 +34,11 @@ const ChatSessionListComponent: any = ({
 	const selectChat = (pubkey: any) => {
 		chats.forEach((chat: any) => {
 			if (chat.pubkey === pubkey) {
-				setSelectedChat(chat);
+				if (chat.receiveKey) {
+					setSelectedChat(chat);
+				} else {
+					setErrorChat(true);
+				}
 			}
 		});
 	};
@@ -62,15 +69,21 @@ const ChatSessionListComponent: any = ({
 									<ChatIcon />
 								</Avatar>
 							</ListItemAvatar>
-							<ListItemText>
-								<Typography sx={{ whiteSpace: 'normal' }}>
-									{chat.name.substring(0, 15)}
-								</Typography>
-							</ListItemText>
+							<ListItemText
+								primary={chat.name.substring(0, 20)}
+								secondary={!chat.receiveKey && 'Requested'}
+							/>
 						</ListItemButton>
 					))}
 				</List>
 			</Box>
+
+			<GeneralNotificationComponent
+				type="error"
+				message="Chat request has not been accepted yet."
+				open={errorChat}
+				setOpen={setErrorChat}
+			/>
 
 			<NewChatDialogueComponent open={openNewChat} setOpen={setOpenNewChat} />
 		</div>

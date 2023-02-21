@@ -16,6 +16,11 @@ export interface Chat {
 	receiveKey: string;
 }
 
+export interface Request {
+	pubkey: string;
+	receivedPublic: string;
+}
+
 export interface Message {
 	pubkey: string;
 	date: number;
@@ -24,19 +29,12 @@ export interface Message {
 	sent: boolean; // boolean to identify weather sent or received
 }
 
-// export interface Request {
-// 	id: number;
-// 	pubkey: string;
-// 	date: string;
-// 	type: string;
-// 	data: string;
-// }
-
 export class PrismChatWebClientStore extends Dexie {
 	// 'friends' is added by dexie when declaring the stores()
 	// We just tell the typing system this is the case
 	general!: Table<General>;
 	chat!: Table<Chat>;
+	request!: Table<Request>;
 	message!: Table<Message>;
 
 	constructor() {
@@ -44,6 +42,7 @@ export class PrismChatWebClientStore extends Dexie {
 		this.version(1).stores({
 			general: '&name', // Primary key and indexed props
 			chat: '&pubkey',
+			request: '&pubkey',
 			message: '++id, pubkey, date',
 		});
 	}
