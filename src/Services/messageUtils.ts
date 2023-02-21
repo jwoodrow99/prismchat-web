@@ -74,6 +74,7 @@ const processMessage_IC = async (from: string, data: any) => {
 			data
 		);
 		await db.chat.add({
+			name: from,
 			pubkey: from,
 			masterPublic: sessionMasterKeys.publicKey,
 			masterPrivate: sessionMasterKeys.privateKey,

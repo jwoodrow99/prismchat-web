@@ -7,6 +7,7 @@ export interface General {
 }
 
 export interface Chat {
+	name: string;
 	pubkey: string;
 	masterPublic: string;
 	masterPrivate: string;

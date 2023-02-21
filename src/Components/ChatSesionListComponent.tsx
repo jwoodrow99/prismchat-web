@@ -1,25 +1,18 @@
 import { useEffect, useState } from 'react';
-import { Prism } from 'prismchat-lib';
-import api from '../Services/api';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../Services/db';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import ChatIcon from '@mui/icons-material/Chat';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+
+import NewChatDialogueComponent from './NewChatDialogueComponent';
 
 // import styles from './AboutPage.module.css';
 
@@ -28,61 +21,12 @@ const ChatSessionListComponent: any = ({
 	setSelectedChat,
 }: any) => {
 	const [openNewChat, setOpenNewChat] = useState(false);
-	const [newChatRecipient, setNewChatRecipient] = useState('');
 
 	const chats: any = useLiveQuery(async () => {
 		return await db.chat.toArray();
 	});
 
 	useEffect(() => {});
-
-	const startNewChat = async (recipientPublicKey: string) => {
-		const identityKeysCheck: any = await db.general
-			.where('name')
-			.equals('IdentityKeys')
-			.first();
-
-		const prism: any = new Prism(
-			identityKeysCheck.value.public,
-			identityKeysCheck.value.private
-		);
-
-		await prism.init();
-
-		const sessionMasterKeys: any = prism.generateSessionKeys();
-
-		await db.chat.add({
-			pubkey: recipientPublicKey,
-			masterPublic: sessionMasterKeys.publicKey,
-			masterPrivate: sessionMasterKeys.privateKey,
-			sendCount: 0,
-			sendKey: '',
-			receiveKey: '',
-		});
-
-		let layer2Up = prism.prismEncrypt_Layer2(
-			'IC',
-			0,
-			null,
-			sessionMasterKeys.publicKey,
-			recipientPublicKey
-		);
-		let layer3Up = prism.prismEncrypt_Layer3(
-			layer2Up.nonce,
-			layer2Up.cypherText
-		);
-		let encryptedData = prism.prismEncrypt_Layer4(
-			layer3Up.key,
-			layer3Up.nonce,
-			layer3Up.cypherText,
-			recipientPublicKey
-		);
-
-		await api.post('/message', {
-			to: recipientPublicKey,
-			data: encryptedData,
-		});
-	};
 
 	const selectChat = (pubkey: any) => {
 		chats.forEach((chat: any) => {
@@ -94,16 +38,7 @@ const ChatSessionListComponent: any = ({
 
 	return (
 		<div className="ChatSessionListComponent">
-			<Box
-				sx={{
-					width: '100%',
-					height: 'calc(100vh - 64px)',
-					outline: '1px solid grey',
-					overflow: 'auto',
-				}}
-				justifyContent="flex-end"
-				alignItems="flex-end"
-			>
+			<Box justifyContent="flex-end" alignItems="flex-end">
 				<Button
 					variant="contained"
 					onClick={() => {
@@ -129,51 +64,15 @@ const ChatSessionListComponent: any = ({
 							</ListItemAvatar>
 							<ListItemText>
 								<Typography sx={{ whiteSpace: 'normal' }}>
-									{chat.pubkey.substring(0, 10) + '...'}
+									{chat.name.substring(0, 15)}
 								</Typography>
 							</ListItemText>
 						</ListItemButton>
 					))}
 				</List>
 			</Box>
-			{/* new Chat Window */}
-			<Dialog open={openNewChat}>
-				<DialogTitle>New Chat</DialogTitle>
-				<DialogContent>
-					<TextField
-						fullWidth
-						variant="outlined"
-						size="small"
-						value={newChatRecipient}
-						onKeyPress={(event: any) => {
-							if (event.key === 'Enter') {
-								setNewChatRecipient(event.target.value);
-							}
-						}}
-						onChange={(event: any) => {
-							setNewChatRecipient(event.target.value);
-						}}
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button
-						onClick={() => {
-							startNewChat(newChatRecipient);
-							setOpenNewChat(false);
-						}}
-					>
-						Agree
-					</Button>
-					<Button
-						color="error"
-						onClick={() => {
-							setOpenNewChat(false);
-						}}
-					>
-						Cancel
-					</Button>
-				</DialogActions>
-			</Dialog>
+
+			<NewChatDialogueComponent open={openNewChat} setOpen={setOpenNewChat} />
 		</div>
 	);
 };
