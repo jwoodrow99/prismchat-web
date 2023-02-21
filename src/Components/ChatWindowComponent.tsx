@@ -141,7 +141,7 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 												backgroundColor: 'DodgerBlue',
 												color: 'white',
 												borderRadius: '10px',
-												margin: '0px 10px 10px 100px',
+												margin: '5px 10px 5px 100px',
 												padding: '12px 30px',
 												width: 'auto',
 											}}
@@ -157,7 +157,7 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 												backgroundColor: 'Gainsboro',
 												color: 'black',
 												borderRadius: '10px',
-												margin: '0px 100px 10px 10px',
+												margin: '5px 100px 5px 10px',
 												padding: '10px 30px',
 											}}
 										>

@@ -16,8 +16,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
+
+import GeneralNotificationComponent from './Components/GeneralNotificationComponent';
 
 import HomePage from './Pages/HomePage';
 import LoginPage from './Pages/AboutPage';
@@ -27,7 +27,8 @@ import LoginPage from './Pages/AboutPage';
 function App() {
 	// State
 	const [openSetup, setOpenSetup] = useState(false);
-	const [snackbarOpen, setSnackbarOpen] = useState(false);
+	const [keysFoundNotify, setKeysFoundNotify] = useState(false);
+	const [copyIdentityKeyNotify, setCopyIdentityKeyNotify] = useState(false);
 	const [identityPublicKey, setIdentityPublickey] = useState(null);
 
 	// Use Effect hook
@@ -42,7 +43,7 @@ function App() {
 				setOpenSetup(true);
 			} else {
 				messageUtils.pull();
-				setSnackbarOpen(true);
+				setKeysFoundNotify(true);
 				setIdentityPublickey(identityKeysCheck.value.public);
 			}
 		})();
@@ -84,8 +85,19 @@ function App() {
 						<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
 							Prism Chat Web
 						</Typography>
-						<div>{identityPublicKey}</div>
-						{/* <Button color="inherit">Login</Button> */}
+						<Box
+							sx={{
+								'&:hover': {
+									cursor: 'copy',
+								},
+							}}
+							onClick={() => {
+								navigator.clipboard.writeText(identityPublicKey || '');
+								setCopyIdentityKeyNotify(true);
+							}}
+						>
+							{identityPublicKey}
+						</Box>
 					</Toolbar>
 				</AppBar>
 
@@ -98,6 +110,7 @@ function App() {
 							permission to generate keys for you to start using the Prism Chat
 							service?
 						</DialogContentText>
+						<br />
 						<DialogContentText>
 							<b>This application is for demonstration purposes ONLY!</b>
 						</DialogContentText>
@@ -115,24 +128,20 @@ function App() {
 					</DialogActions>
 				</Dialog>
 
-				{/* Keys found alert */}
-				<Snackbar
-					anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-					open={snackbarOpen}
-					onClose={() => {
-						setSnackbarOpen(false);
-					}}
-					autoHideDuration={5000}
-				>
-					<Alert
-						onClose={() => {
-							setSnackbarOpen(false);
-						}}
-						severity="success"
-					>
-						Prism session detected!
-					</Alert>
-				</Snackbar>
+				{/* Notifications */}
+				<GeneralNotificationComponent
+					type="success"
+					message="Prism session detected!"
+					open={keysFoundNotify}
+					setOpen={setKeysFoundNotify}
+				/>
+
+				<GeneralNotificationComponent
+					type="success"
+					message="Your Public Identity Key was coppiced!"
+					open={copyIdentityKeyNotify}
+					setOpen={setCopyIdentityKeyNotify}
+				/>
 
 				{/* Route pages */}
 				<Routes>
