@@ -12,7 +12,6 @@ import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import ChatIcon from '@mui/icons-material/Chat';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -21,7 +20,7 @@ import TextField from '@mui/material/TextField';
 
 // import styles from './AboutPage.module.css';
 
-const ChatRequestListComponent: any = ({}: any) => {
+const ChatRequestListComponent: any = () => {
 	const [selectedRequest, setSelectedRequest]: any = useState(null);
 	const [openRequestDialogue, setOpenRequestDialogue]: any = useState(false);
 	const [requestChatName, setRequestChatName]: any = useState('');

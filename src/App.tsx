@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route, Link } from 'react-router-dom'; // Routes, Route, useNavigate, Link
+import { Routes, Route } from 'react-router-dom'; // Routes, Route, useNavigate, Link
 import { Prism } from 'prismchat-lib';
 import { db } from './Services/db';
 import { messageUtils } from './Services/messageUtils';

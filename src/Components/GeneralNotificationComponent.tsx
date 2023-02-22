@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react'; // useEffect, useState
 
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';

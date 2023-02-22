@@ -10,8 +10,6 @@ import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import ChatIcon from '@mui/icons-material/Chat';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Chip from '@mui/material/Chip';
 
 import NewChatDialogueComponent from './NewChatDialogueComponent';
 import GeneralNotificationComponent from './GeneralNotificationComponent';

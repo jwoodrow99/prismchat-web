@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Prism } from 'prismchat-lib';
-import { useLiveQuery } from 'dexie-react-hooks';
+// import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../Services/db';
 import api from '../Services/api';
 
