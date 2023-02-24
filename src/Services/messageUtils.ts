@@ -8,7 +8,10 @@ const pull = async () => {
 		.equals('IdentityKeys')
 		.first();
 
-	if (identityKeys !== undefined) {
+	if (
+		identityKeys !== undefined &&
+		localStorage.getItem('access_token') !== null
+	) {
 		const prism: any = new Prism(
 			identityKeys.value.public,
 			identityKeys.value.private
@@ -17,7 +20,7 @@ const pull = async () => {
 
 		const newChats = await api.get('/message', {
 			headers: {
-				'X-Pub-Id': identityKeys.value.public,
+				Authorization: `Bearer ${localStorage.getItem('access_token')}`,
 			},
 		});
 

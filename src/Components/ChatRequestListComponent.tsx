@@ -34,7 +34,6 @@ const ChatRequestListComponent: any = () => {
 	const selectRequest = (request: any) => {
 		setSelectedRequest(request);
 		setOpenRequestDialogue(true);
-		console.log(request);
 	};
 
 	const acceptRequest = async () => {

@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'; // Routes, Route, useNavigate,
 import { Prism } from 'prismchat-lib';
 import { db } from './Services/db';
 import { messageUtils } from './Services/messageUtils';
+import authUtil from './Services/authUtil';
 
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
@@ -54,11 +55,14 @@ function App() {
 		await prism.init();
 		let newlyGeneratedIdentityKeys = prism.generateIdentityKeys();
 
-		// Add the new friend!
+		// Create new account
 		await db.general.add({
 			name: 'IdentityKeys',
 			value: newlyGeneratedIdentityKeys,
 		});
+
+		// Auth to server
+		await authUtil.init();
 
 		setIdentityPublickey(newlyGeneratedIdentityKeys.public);
 		setOpenSetup(false);

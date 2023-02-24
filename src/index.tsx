@@ -6,9 +6,14 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 
 import { messageUtils } from './Services/messageUtils';
+import authUtil from './Services/authUtil';
 
 // Main setup process
 (async function () {
+	// Auth to server
+	await authUtil.init();
+
+	// Create automatic message pull / ping
 	await messageUtils.pull();
 	setInterval(async () => {
 		await messageUtils.pull();
