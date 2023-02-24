@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../Services/db';
 
+import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Tab from '@mui/material/Tab';
@@ -12,12 +13,14 @@ import TabPanel from '@mui/lab/TabPanel';
 import ChatSessionListComponent from '../Components/ChatSesionListComponent';
 import ChatRequestListComponent from '../Components/ChatRequestListComponent';
 import ChatWindowComponent from '../Components/ChatWindowComponent';
+import NewChatDialogueComponent from '../Components/NewChatDialogueComponent';
 
 // import styles from './HomePage.module.css';
 
 const HomePage: any = () => {
 	const [selectedChat, setSelectedChat]: any = useState(null);
 	const [tab, setTab]: any = useState('chat');
+	const [openNewChat, setOpenNewChat] = useState(false);
 
 	useLiveQuery(async () => {
 		let chatQuery = await db.chat.toArray();
@@ -48,6 +51,21 @@ const HomePage: any = () => {
 						justifyContent="flex-end"
 						alignItems="flex-end"
 					>
+						<Box
+							sx={{
+								padding: '10px',
+							}}
+						>
+							<Button
+								fullWidth
+								variant="contained"
+								onClick={() => {
+									setOpenNewChat(true);
+								}}
+							>
+								New Chat
+							</Button>
+						</Box>
 						<TabContext value={tab}>
 							<TabList
 								variant="fullWidth"
@@ -86,6 +104,8 @@ const HomePage: any = () => {
 					/>
 				</Grid>
 			</Grid>
+
+			<NewChatDialogueComponent open={openNewChat} setOpen={setOpenNewChat} />
 		</div>
 	);
 };
