@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Prism } from 'prismchat-lib';
 import api from '../Services/api';
 import { db } from '../Services/db';
+import prismClient from '../Services/prismClient';
 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -20,17 +20,7 @@ const NewChatDialogueComponent: any = ({ open, setOpen }: any) => {
 	useEffect(() => {});
 
 	const startNewChat = async (recipientPublicKey: string) => {
-		const identityKeysCheck: any = await db.general
-			.where('name')
-			.equals('IdentityKeys')
-			.first();
-
-		const prism: any = new Prism(
-			identityKeysCheck.value.public,
-			identityKeysCheck.value.private
-		);
-
-		await prism.init();
+		const prism: any = await prismClient.init();
 
 		const sessionMasterKeys: any = prism.generateSessionKeys();
 

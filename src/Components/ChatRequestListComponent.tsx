@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import api from '../Services/api';
 import { db } from '../Services/db';
-import { Prism } from 'prismchat-lib';
+import prismClient from '../Services/prismClient';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -37,62 +37,51 @@ const ChatRequestListComponent: any = () => {
 	};
 
 	const acceptRequest = async () => {
-		let identityKeys = await db.general
-			.where('name')
-			.equals('IdentityKeys')
-			.first();
+		const prism: any = await prismClient.init();
 
-		if (identityKeys !== undefined) {
-			const prism: any = new Prism(
-				identityKeys.value.public,
-				identityKeys.value.private
-			);
-			await prism.init();
+		// Generate session keys
+		const sessionMasterKeys: any = prism.generateSessionKeys();
+		const { sendKey, receiveKey } = prism.generateSharedSessionKeysInitial(
+			sessionMasterKeys.publicKey,
+			sessionMasterKeys.privateKey,
+			selectedRequest.receivedPublic
+		);
 
-			// Generate session keys
-			const sessionMasterKeys: any = prism.generateSessionKeys();
-			const { sendKey, receiveKey } = prism.generateSharedSessionKeysInitial(
-				sessionMasterKeys.publicKey,
-				sessionMasterKeys.privateKey,
-				selectedRequest.receivedPublic
-			);
+		await db.chat.add({
+			name: requestChatName,
+			pubkey: selectedRequest.pubkey,
+			masterPublic: sessionMasterKeys.publicKey,
+			masterPrivate: sessionMasterKeys.privateKey,
+			sendCount: 0,
+			sendKey: sendKey,
+			receiveKey: receiveKey,
+		});
 
-			await db.chat.add({
-				name: requestChatName,
-				pubkey: selectedRequest.pubkey,
-				masterPublic: sessionMasterKeys.publicKey,
-				masterPrivate: sessionMasterKeys.privateKey,
-				sendCount: 0,
-				sendKey: sendKey,
-				receiveKey: receiveKey,
-			});
+		// Send RC
+		let layer2Up = prism.prismEncrypt_Layer2(
+			'RC',
+			0,
+			null,
+			sessionMasterKeys.publicKey,
+			selectedRequest.pubkey
+		);
+		let layer3Up = prism.prismEncrypt_Layer3(
+			layer2Up.nonce,
+			layer2Up.cypherText
+		);
+		let encryptedData = prism.prismEncrypt_Layer4(
+			layer3Up.key,
+			layer3Up.nonce,
+			layer3Up.cypherText,
+			selectedRequest.pubkey
+		);
 
-			// Send RC
-			let layer2Up = prism.prismEncrypt_Layer2(
-				'RC',
-				0,
-				null,
-				sessionMasterKeys.publicKey,
-				selectedRequest.pubkey
-			);
-			let layer3Up = prism.prismEncrypt_Layer3(
-				layer2Up.nonce,
-				layer2Up.cypherText
-			);
-			let encryptedData = prism.prismEncrypt_Layer4(
-				layer3Up.key,
-				layer3Up.nonce,
-				layer3Up.cypherText,
-				selectedRequest.pubkey
-			);
+		await db.request.delete(selectedRequest.pubkey);
 
-			await db.request.delete(selectedRequest.pubkey);
-
-			await api.post('/message', {
-				to: selectedRequest.pubkey,
-				data: encryptedData,
-			});
-		}
+		await api.post('/message', {
+			to: selectedRequest.pubkey,
+			data: encryptedData,
+		});
 
 		setSelectedRequest(null);
 		setRequestChatName('');

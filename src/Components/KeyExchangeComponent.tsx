@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Prism } from 'prismchat-lib';
 import api from '../Services/api';
 import { db } from '../Services/db';
 import { useLiveQuery } from 'dexie-react-hooks';
+import prismClient from '../Services/prismClient';
 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -32,21 +32,22 @@ const KeyExchangeComponent: any = ({ open, setOpen }: any) => {
 
 	useEffect(() => {
 		(async function () {
-			let boxKeysCheck: any = await db.general
-				.where('name')
-				.equals('BoxKeys')
-				.first();
-
-			setBoxPublickey(boxKeysCheck.value.public);
-
 			let identityKeyCheck: any = await db.general
 				.where('name')
 				.equals('IdentityKeys')
 				.first();
 
-			setIdentityPublicKey(identityKeyCheck.value.public);
+			let boxKeysCheck: any = await db.general
+				.where('name')
+				.equals('BoxKeys')
+				.first();
+
+			if (boxKeysCheck !== undefined && identityKeyCheck !== undefined) {
+				setBoxPublickey(boxKeysCheck.value.public);
+				setIdentityPublicKey(identityKeyCheck.value.public);
+			}
 		})();
-	}, [boxPublicKey, identityPublicKey]);
+	});
 
 	const boxEncrypt = async () => {
 		let boxKeysQuery: any = await db.general
@@ -54,11 +55,10 @@ const KeyExchangeComponent: any = ({ open, setOpen }: any) => {
 			.equals('BoxKeys')
 			.first();
 
-		const prism: any = new Prism(
+		const prism: any = await prismClient.init(
 			boxKeysQuery.value.public,
 			boxKeysQuery.value.private
 		);
-		await prism.init();
 
 		const encrypted = prism.boxEncrypt(identityPublicKey, encryptRecipientKey);
 
@@ -73,11 +73,10 @@ const KeyExchangeComponent: any = ({ open, setOpen }: any) => {
 			.equals('BoxKeys')
 			.first();
 
-		const prism: any = new Prism(
+		const prism: any = await prismClient.init(
 			boxKeysQuery.value.public,
 			boxKeysQuery.value.private
 		);
-		await prism.init();
 
 		const [decryptSenderKey, nonce, cypherText] = decryptMessage.split(':');
 		const decrypted = prism.boxDecrypt(cypherText, nonce, decryptSenderKey);

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom'; // Routes, Route, useNavigate, Link
-import { Prism } from 'prismchat-lib';
+import prismClient from './Services/prismClient';
 import { db } from './Services/db';
 import { messageUtils } from './Services/messageUtils';
 import authUtil from './Services/authUtil';
@@ -43,7 +43,7 @@ function App() {
 			if (identityKeysCheck === undefined) {
 				setOpenSetup(true);
 			} else {
-				messageUtils.pull();
+				messageUtils.get();
 				setKeysFoundNotify(true);
 				setIdentityPublickey(identityKeysCheck.value.public);
 			}
@@ -51,30 +51,28 @@ function App() {
 	}, [identityPublicKey]);
 
 	const createNewAccount = async () => {
-		const prism: any = new Prism();
-		await prism.init();
-		let newlyGeneratedIdentityKeys = prism.generateIdentityKeys();
-
-		const prism2: any = new Prism();
-		await prism2.init();
-		let newlyGeneratedBoxKeys = prism2.generateIdentityKeys();
-
-		// Create new account
+		// Create new account & IdentityKeys
+		const prism: any = await prismClient.init();
 		await db.general.add({
 			name: 'IdentityKeys',
-			value: newlyGeneratedIdentityKeys,
+			value: prism.IdentityKeys,
 		});
 
-		// Create box keys
+		// Create new box keys
+		const prismBox: any = await prismClient.init();
+		const generatedBoxKeys = prismBox.generateIdentityKeys();
 		await db.general.add({
 			name: 'BoxKeys',
-			value: newlyGeneratedBoxKeys,
+			value: generatedBoxKeys,
 		});
 
 		// Auth to server
-		await authUtil.init();
+		const { cypherText, nonce } = await authUtil.request();
+		const access_token = await authUtil.verify(cypherText, nonce);
+		localStorage.setItem('access_token', access_token);
 
-		setIdentityPublickey(newlyGeneratedIdentityKeys.public);
+		// Save state
+		setIdentityPublickey(prism.IdentityKeys.public);
 		setOpenSetup(false);
 	};
 
@@ -145,7 +143,7 @@ function App() {
 				{/* Notifications */}
 				<GeneralNotificationComponent
 					type="success"
-					message="Prism session detected!"
+					message="Resume existing Prism Chat!"
 					open={keysFoundNotify}
 					setOpen={setKeysFoundNotify}
 				/>

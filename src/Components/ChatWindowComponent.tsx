@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Prism } from 'prismchat-lib';
 // import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../Services/db';
 import api from '../Services/api';
+import prismClient from '../Services/prismClient';
 
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -33,15 +33,7 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 	});
 
 	const sendMessage = async (message: any) => {
-		const identityKeysCheck: any = await db.general
-			.where('name')
-			.equals('IdentityKeys')
-			.first();
-		const prism: any = new Prism(
-			identityKeysCheck.value.public,
-			identityKeysCheck.value.private
-		);
-		await prism.init();
+		const prism: any = await prismClient.init();
 
 		// Update chat to increase count and modify send key
 		let derivedSenKey = prism.sessionKeyDerivation(

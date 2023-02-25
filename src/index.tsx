@@ -5,18 +5,41 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 
+import { db } from './Services/db';
 import { messageUtils } from './Services/messageUtils';
 import authUtil from './Services/authUtil';
 
+const authenticate = async () => {
+	let identityKeys = await db.general
+		.where('name')
+		.equals('IdentityKeys')
+		.first();
+
+	if (identityKeys) {
+		const { cypherText, nonce } = await authUtil.request();
+		const access_token = await authUtil.verify(cypherText, nonce);
+		localStorage.setItem('access_token', access_token);
+	}
+};
+
+const getMessages = async () => {
+	let identityKeys = await db.general
+		.where('name')
+		.equals('IdentityKeys')
+		.first();
+
+	if (identityKeys) {
+		await messageUtils.get();
+	}
+};
+
 // Main setup process
 (async function () {
-	// Auth to server
-	await authUtil.init();
+	await authenticate();
+	await getMessages();
 
-	// Create automatic message pull / ping
-	await messageUtils.pull();
 	setInterval(async () => {
-		await messageUtils.pull();
+		await getMessages();
 	}, 10000);
 })();
 
