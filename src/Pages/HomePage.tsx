@@ -14,6 +14,7 @@ import ChatSessionListComponent from '../Components/ChatSesionListComponent';
 import ChatRequestListComponent from '../Components/ChatRequestListComponent';
 import ChatWindowComponent from '../Components/ChatWindowComponent';
 import NewChatDialogueComponent from '../Components/NewChatDialogueComponent';
+import KeyExchangeComponent from '../Components/KeyExchangeComponent';
 
 // import styles from './HomePage.module.css';
 
@@ -21,6 +22,7 @@ const HomePage: any = () => {
 	const [selectedChat, setSelectedChat]: any = useState(null);
 	const [tab, setTab]: any = useState('chat');
 	const [openNewChat, setOpenNewChat] = useState(false);
+	const [openBoxEncrypt, setOpenBoxEncrypt] = useState(false);
 
 	useLiveQuery(async () => {
 		let chatQuery = await db.chat.toArray();
@@ -66,6 +68,21 @@ const HomePage: any = () => {
 								New Chat
 							</Button>
 						</Box>
+						<Box
+							sx={{
+								padding: '10px',
+							}}
+						>
+							<Button
+								fullWidth
+								variant="contained"
+								onClick={() => {
+									setOpenBoxEncrypt(true);
+								}}
+							>
+								Key Exchange
+							</Button>
+						</Box>
 						<TabContext value={tab}>
 							<TabList
 								variant="fullWidth"
@@ -106,6 +123,7 @@ const HomePage: any = () => {
 			</Grid>
 
 			<NewChatDialogueComponent open={openNewChat} setOpen={setOpenNewChat} />
+			<KeyExchangeComponent open={openBoxEncrypt} setOpen={setOpenBoxEncrypt} />
 		</div>
 	);
 };

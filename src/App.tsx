@@ -55,10 +55,20 @@ function App() {
 		await prism.init();
 		let newlyGeneratedIdentityKeys = prism.generateIdentityKeys();
 
+		const prism2: any = new Prism();
+		await prism2.init();
+		let newlyGeneratedBoxKeys = prism2.generateIdentityKeys();
+
 		// Create new account
 		await db.general.add({
 			name: 'IdentityKeys',
 			value: newlyGeneratedIdentityKeys,
+		});
+
+		// Create box keys
+		await db.general.add({
+			name: 'BoxKeys',
+			value: newlyGeneratedBoxKeys,
 		});
 
 		// Auth to server
