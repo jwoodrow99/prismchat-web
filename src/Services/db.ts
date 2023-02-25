@@ -14,6 +14,7 @@ export interface Chat {
 	sendCount: number;
 	sendKey: string;
 	receiveKey: string;
+	newMessage: boolean;
 }
 
 export interface Request {

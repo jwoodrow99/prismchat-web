@@ -76,6 +76,11 @@ const processMessage_M = async (from: string, data: any) => {
 		data: decryptedData.message,
 		sent: false,
 	});
+
+	await db.chat.update(chatRecord.pubkey, {
+		newMessage: true,
+	});
+
 	console.log('New Message Received: ', {
 		from: from,
 		message: decryptedData.message,

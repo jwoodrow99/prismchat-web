@@ -20,7 +20,10 @@ import TextField from '@mui/material/TextField';
 
 // import styles from './AboutPage.module.css';
 
-const ChatRequestListComponent: any = () => {
+const ChatRequestListComponent: any = ({
+	selectedChat,
+	setSelectedChat,
+}: any) => {
 	const [selectedRequest, setSelectedRequest]: any = useState(null);
 	const [openRequestDialogue, setOpenRequestDialogue]: any = useState(false);
 	const [requestChatName, setRequestChatName]: any = useState('');
@@ -55,6 +58,7 @@ const ChatRequestListComponent: any = () => {
 			sendCount: 0,
 			sendKey: sendKey,
 			receiveKey: receiveKey,
+			newMessage: false,
 		});
 
 		// Send RC

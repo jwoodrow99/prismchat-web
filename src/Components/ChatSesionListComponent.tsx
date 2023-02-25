@@ -9,6 +9,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import ChatIcon from '@mui/icons-material/Chat';
+import Badge from '@mui/material/Badge';
 
 import GeneralNotificationComponent from './GeneralNotificationComponent';
 
@@ -21,16 +22,22 @@ const ChatSessionListComponent: any = ({
 	const [errorChat, setErrorChat] = useState(false);
 
 	const chats: any = useLiveQuery(async () => {
-		return await db.chat.toArray();
+		const chatQuery = await db.chat.toArray();
+		return chatQuery; //.sort((x, y) => {
+		//return Number(y.newMessage) - Number(x.newMessage);
+		// });
 	});
 
 	useEffect(() => {});
 
 	const selectChat = (pubkey: any) => {
-		chats.forEach((chat: any) => {
+		chats.forEach(async (chat: any) => {
 			if (chat.pubkey === pubkey) {
 				if (chat.receiveKey) {
 					setSelectedChat(chat);
+					await db.chat.update(pubkey, {
+						newMessage: false,
+					});
 				} else {
 					setErrorChat(true);
 				}
@@ -55,10 +62,22 @@ const ChatSessionListComponent: any = ({
 									<ChatIcon />
 								</Avatar>
 							</ListItemAvatar>
-							<ListItemText
-								primary={chat.name.substring(0, 20)}
-								secondary={!chat.receiveKey && 'Requested'}
-							/>
+
+							{chat.newMessage && (
+								<Badge color="primary" variant="dot">
+									<ListItemText
+										primary={chat.name.substring(0, 20)}
+										secondary={!chat.receiveKey && 'Requested'}
+									/>
+								</Badge>
+							)}
+
+							{!chat.newMessage && (
+								<ListItemText
+									primary={chat.name.substring(0, 20)}
+									secondary={!chat.receiveKey && 'Requested'}
+								/>
+							)}
 						</ListItemButton>
 					))}
 				</List>

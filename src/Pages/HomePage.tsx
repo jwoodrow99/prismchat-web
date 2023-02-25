@@ -25,15 +25,23 @@ const HomePage: any = () => {
 	const [openBoxEncrypt, setOpenBoxEncrypt] = useState(false);
 
 	useLiveQuery(async () => {
-		let chatQuery = await db.chat.toArray();
-		setSelectedChat(chatQuery[0]);
+		const chatQuery = await db.chat.toArray();
+		if (selectedChat == null) {
+			setSelectedChat(chatQuery[0]);
+		}
 		return chatQuery;
-	});
+	}, [selectedChat]);
 
 	// Use Effect hook
 	useEffect(() => {
-		(async function () {})();
-	}, []);
+		(async function () {
+			// if (selectedChat) {
+			// 	await db.chat.update(selectedChat.pubkey, {
+			// 		newMessage: false,
+			// 	});
+			// }
+		})();
+	}, [selectedChat]);
 
 	const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
 		setTab(newValue);
@@ -109,7 +117,10 @@ const HomePage: any = () => {
 									padding: '10px 0px 0px 0px',
 								}}
 							>
-								<ChatRequestListComponent />
+								<ChatRequestListComponent
+									selectedChat={selectedChat}
+									setSelectedChat={setSelectedChat}
+								/>
 							</TabPanel>
 						</TabContext>
 					</Box>

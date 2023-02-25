@@ -32,6 +32,7 @@ const NewChatDialogueComponent: any = ({ open, setOpen }: any) => {
 			sendCount: 0,
 			sendKey: '',
 			receiveKey: '',
+			newMessage: false,
 		});
 
 		let layer2Up = prism.prismEncrypt_Layer2(
