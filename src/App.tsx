@@ -94,7 +94,19 @@ function App() {
 						>
 							<MenuIcon />
 						</IconButton>
-						<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+						<Typography
+							variant="h6"
+							component="div"
+							sx={{
+								flexGrow: 1,
+								'&:hover': {
+									cursor: 'pointer',
+								},
+							}}
+							onClick={() => {
+								window.open('https://prism.chat/', '_blank');
+							}}
+						>
 							Prism Chat Web
 						</Typography>
 						<Box
