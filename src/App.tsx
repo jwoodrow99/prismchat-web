@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom'; // Routes, Route, useNavigate, Link
 import prismClient from './Services/prismClient';
 import { db } from './Services/db';
-import { messageUtils } from './Services/messageUtils';
 import authUtil from './Services/authUtil';
 
 import Box from '@mui/material/Box';
@@ -27,10 +26,10 @@ import LoginPage from './Pages/AboutPage';
 
 function App() {
 	// State
+	const [identityPublicKey, setIdentityPublickey] = useState(null);
 	const [openSetup, setOpenSetup] = useState(false);
 	const [keysFoundNotify, setKeysFoundNotify] = useState(false);
 	const [copyIdentityKeyNotify, setCopyIdentityKeyNotify] = useState(false);
-	const [identityPublicKey, setIdentityPublickey] = useState(null);
 
 	// Use Effect hook
 	useEffect(() => {
@@ -40,17 +39,15 @@ function App() {
 				.equals('IdentityKeys')
 				.first();
 
-			if (identityKeysCheck === undefined) {
+			if (!identityKeysCheck) {
 				setOpenSetup(true);
 			} else {
-				messageUtils.get();
-				setKeysFoundNotify(true);
 				setIdentityPublickey(identityKeysCheck.value.public);
 			}
 		})();
-	}, [identityPublicKey]);
+	});
 
-	const createNewAccount = async () => {
+	const createNewAccount: any = async () => {
 		// Create new account & IdentityKeys
 		const prism: any = await prismClient.init();
 		await db.general.add({
@@ -66,13 +63,12 @@ function App() {
 			value: generatedBoxKeys,
 		});
 
-		// Auth to server
+		// Authenticate
 		const { cypherText, nonce } = await authUtil.request();
 		const access_token = await authUtil.verify(cypherText, nonce);
 		localStorage.setItem('access_token', access_token);
 
-		// Save state
-		setIdentityPublickey(prism.IdentityKeys.public);
+		// Close creation dialogue
 		setOpenSetup(false);
 	};
 
@@ -83,6 +79,7 @@ function App() {
 					maxHeight: '100vh',
 				}}
 			>
+				{/* App Bar */}
 				<AppBar position="static" sx={{ height: '64px' }}>
 					<Toolbar>
 						<IconButton

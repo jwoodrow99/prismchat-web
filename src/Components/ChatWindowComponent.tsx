@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-// import { useLiveQuery } from 'dexie-react-hooks';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../Services/db';
 import api from '../Services/api';
 import prismClient from '../Services/prismClient';
@@ -16,20 +16,22 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 	const [newMessageText, setNewMessageText] = useState('');
 	const [chatMessages, setChatMessages]: any = useState([]);
 
+	useLiveQuery(async () => {
+		if (selectedChat) {
+			const messageQuery: any = await db.message
+				.where('pubkey')
+				.equals(selectedChat.pubkey)
+				.limit(50)
+				.offset(0)
+				.reverse()
+				.sortBy('date');
+
+			setChatMessages(messageQuery.reverse());
+		}
+	}, [selectedChat]);
+
 	useEffect(() => {
-		(async function () {
-			if (selectedChat) {
-				let messageQuery: any = await db.message
-					.where('pubkey')
-					.equals(selectedChat.pubkey)
-					.limit(50)
-					.offset(0)
-					.reverse()
-					.sortBy('date');
-				setChatMessages(messageQuery.reverse());
-				scrollToBottom();
-			}
-		})();
+		scrollToBottom();
 	});
 
 	const sendMessage = async (message: any) => {

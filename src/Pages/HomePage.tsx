@@ -29,23 +29,12 @@ const HomePage: any = () => {
 		if (selectedChat == null) {
 			setSelectedChat(chatQuery[0]);
 		}
-		return chatQuery;
 	}, [selectedChat]);
 
 	// Use Effect hook
 	useEffect(() => {
-		(async function () {
-			// if (selectedChat) {
-			// 	await db.chat.update(selectedChat.pubkey, {
-			// 		newMessage: false,
-			// 	});
-			// }
-		})();
+		(async function () {})();
 	}, [selectedChat]);
-
-	const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
-		setTab(newValue);
-	};
 
 	return (
 		<div className="HomePage">
@@ -63,7 +52,7 @@ const HomePage: any = () => {
 					>
 						<Box
 							sx={{
-								padding: '10px',
+								padding: '10px 10px 0px 10px',
 							}}
 						>
 							<Button
@@ -78,7 +67,7 @@ const HomePage: any = () => {
 						</Box>
 						<Box
 							sx={{
-								padding: '10px',
+								padding: '10px 10px 0px 10px',
 							}}
 						>
 							<Button
@@ -94,7 +83,9 @@ const HomePage: any = () => {
 						<TabContext value={tab}>
 							<TabList
 								variant="fullWidth"
-								onChange={handleTabChange}
+								onChange={(event: React.SyntheticEvent, newValue: string) => {
+									setTab(newValue);
+								}}
 								aria-label="lab API tabs example"
 							>
 								<Tab label="Chats" value="chat" />

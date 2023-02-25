@@ -20,15 +20,29 @@ const ChatSessionListComponent: any = ({
 	setSelectedChat,
 }: any) => {
 	const [errorChat, setErrorChat] = useState(false);
+	const [chats, setChats]: any = useState([]);
 
-	const chats: any = useLiveQuery(async () => {
-		const chatQuery = await db.chat.toArray();
-		return chatQuery; //.sort((x, y) => {
-		//return Number(y.newMessage) - Number(x.newMessage);
-		// });
+	useLiveQuery(async () => {
+		const chatQuery: any = await db.chat.toArray();
+		const chatsTest = chatQuery.map((chat: any) => {
+			if (selectedChat !== null) {
+				if (selectedChat.pubkey === chat.pubkey) {
+					chat.newMessage = false;
+				}
+			}
+			return chat;
+		});
+
+		setChats(chatsTest);
 	});
 
-	useEffect(() => {});
+	useEffect(() => {
+		if (selectedChat) {
+			db.chat.update(selectedChat.pubkey, {
+				newMessage: false,
+			});
+		}
+	});
 
 	const selectChat = (pubkey: any) => {
 		chats.forEach(async (chat: any) => {
