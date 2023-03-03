@@ -177,7 +177,7 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 						}}
 					>
 						<Grid container spacing={0}>
-							<Grid item xs={9}>
+							<Grid item xs={9} md={10}>
 								<TextField
 									fullWidth
 									variant="outlined"
@@ -194,7 +194,7 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 									}}
 								/>
 							</Grid>
-							<Grid item xs={3}>
+							<Grid item xs={3} md={2}>
 								<Button
 									fullWidth
 									variant="contained"

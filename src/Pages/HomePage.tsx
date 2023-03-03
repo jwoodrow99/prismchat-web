@@ -129,7 +129,7 @@ const HomePage: any = ({ drawerOpen, setDrawerOpen }: any) => {
 
 				<Grid
 					item
-					xs={3}
+					xs={4}
 					sx={{ display: { xs: 'none', sm: 'block', md: 'block' } }}
 				>
 					<Box
@@ -208,7 +208,7 @@ const HomePage: any = ({ drawerOpen, setDrawerOpen }: any) => {
 						</TabContext>
 					</Box>
 				</Grid>
-				<Grid item xs={12} md={9}>
+				<Grid item xs={12} sm={9}>
 					<ChatWindowComponent
 						selectedChat={selectedChat}
 						setSelectedChat={setSelectedChat}
