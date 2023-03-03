@@ -103,9 +103,9 @@ const KeyExchangeComponent: any = ({ open, setOpen }: any) => {
 					>
 						{boxPublicKey}
 					</Box>
-					<Box sx={{ margin: '10px', minWidth: '500px' }}>
+					<Box sx={{ margin: '10px' }}>
 						<Grid container spacing={2}>
-							<Grid item xs={6}>
+							<Grid item xs={12} sm={6}>
 								<Box sx={{ marginBottom: '10px' }}>
 									<div>
 										<b>Encrypt</b>
@@ -154,7 +154,7 @@ const KeyExchangeComponent: any = ({ open, setOpen }: any) => {
 									{encrypted}
 								</Box>
 							</Grid>
-							<Grid item xs={6}>
+							<Grid item xs={12} sm={6}>
 								<Box sx={{ marginBottom: '10px' }}>
 									<div>
 										<b>Decrypt</b>
