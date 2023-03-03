@@ -25,9 +25,8 @@ import QrDialogueComponent from './Components/QrDialogueComponent';
 import GeneralNotificationComponent from './Components/GeneralNotificationComponent';
 
 import HomePage from './Pages/HomePage';
-import LoginPage from './Pages/AboutPage';
 
-// import styles from './App.module.css';
+import styles from './App.module.css';
 
 function App() {
 	// State
@@ -88,34 +87,33 @@ function App() {
 			>
 				{/* App Bar */}
 				<AppBar position="static" sx={{ height: '64px' }}>
-					<Toolbar>
+					<Toolbar
+						sx={{
+							height: '64px',
+						}}
+					>
 						<IconButton
 							size="large"
 							edge="start"
 							color="inherit"
 							aria-label="menu"
-							sx={{ mr: 2 }}
 							onClick={() => {
 								setDrawerOpen(true);
 							}}
 						>
 							<MenuIcon />
 						</IconButton>
-						<Typography
-							variant="h6"
-							component="div"
+						<Box
 							sx={{
 								flexGrow: 1,
-								'&:hover': {
-									cursor: 'pointer',
-								},
-							}}
-							onClick={() => {
-								window.open('https://prism.chat/', '_blank');
 							}}
 						>
-							Prism Chat Web
-						</Typography>
+							<img
+								className={styles.logoImage}
+								src={process.env.PUBLIC_URL + '/logo/logo.png'}
+								alt="Prism Chat logo"
+							/>
+						</Box>
 						<Box
 							sx={{
 								'&:hover': {
