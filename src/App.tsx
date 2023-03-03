@@ -96,7 +96,7 @@ function App() {
 							aria-label="menu"
 							sx={{ mr: 2 }}
 							onClick={() => {
-								setDrawerOpen(!drawerOpen);
+								setDrawerOpen(true);
 							}}
 						>
 							<MenuIcon />

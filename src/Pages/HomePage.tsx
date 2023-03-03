@@ -10,7 +10,6 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import Drawer from '@mui/material/Drawer';
-import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 
 import ChatSessionListComponent from '../Components/ChatSesionListComponent';
 import ChatRequestListComponent from '../Components/ChatRequestListComponent';
@@ -40,94 +39,98 @@ const HomePage: any = ({ drawerOpen, setDrawerOpen }: any) => {
 
 	return (
 		<div className="HomePage">
-			<SwipeableDrawer
-				open={drawerOpen}
-				onClose={setDrawerOpen(false)}
-				onOpen={setDrawerOpen(true)}
-				sx={{ display: { xs: 'block', sm: 'none', md: 'none' } }}
-			>
-				<Box
-					sx={{
-						width: '100%',
-						height: 'calc(100vh - 64px)',
-						borderRight: '1px solid LightGrey',
-						overflow: 'auto',
+			<Grid container spacing={0}>
+				<Drawer
+					open={drawerOpen}
+					onClose={() => {
+						setDrawerOpen(false);
 					}}
-					justifyContent="flex-end"
-					alignItems="flex-end"
+					sx={{
+						display: { xs: 'block', sm: 'none', md: 'none' },
+					}}
 				>
 					<Box
 						sx={{
-							padding: '10px 10px 0px 10px',
+							width: '60vw',
+							height: 'calc(100vh - 64px)',
+							borderRight: '1px solid LightGrey',
+							overflow: 'auto',
 						}}
+						justifyContent="flex-end"
+						alignItems="flex-end"
 					>
-						<Button
-							fullWidth
-							variant="contained"
-							onClick={() => {
-								setOpenNewChat(true);
-							}}
-						>
-							New Chat
-						</Button>
-					</Box>
-					<Box
-						sx={{
-							padding: '10px 10px 0px 10px',
-						}}
-					>
-						<Button
-							fullWidth
-							variant="contained"
-							onClick={() => {
-								setOpenBoxEncrypt(true);
-							}}
-						>
-							Key Exchange
-						</Button>
-					</Box>
-					<TabContext value={tab}>
-						<TabList
-							variant="fullWidth"
-							onChange={(event: React.SyntheticEvent, newValue: string) => {
-								setTab(newValue);
-							}}
-							aria-label="lab API tabs example"
-						>
-							<Tab label="Chats" value="chat" />
-							<Tab label="Requests" value="request" />
-						</TabList>
-						<TabPanel
-							value="chat"
+						<Box
 							sx={{
-								padding: '10px 0px 0px 0px',
+								padding: '10px 10px 0px 10px',
 							}}
 						>
-							<ChatSessionListComponent
-								selectedChat={selectedChat}
-								setSelectedChat={setSelectedChat}
-							/>
-						</TabPanel>
-						<TabPanel
-							value="request"
+							<Button
+								fullWidth
+								variant="contained"
+								onClick={() => {
+									setOpenNewChat(true);
+								}}
+							>
+								New Chat
+							</Button>
+						</Box>
+						<Box
 							sx={{
-								padding: '10px 0px 0px 0px',
+								padding: '10px 10px 0px 10px',
 							}}
 						>
-							<ChatRequestListComponent
-								selectedChat={selectedChat}
-								setSelectedChat={setSelectedChat}
-							/>
-						</TabPanel>
-					</TabContext>
-				</Box>
-			</SwipeableDrawer>
+							<Button
+								fullWidth
+								variant="contained"
+								onClick={() => {
+									setOpenBoxEncrypt(true);
+								}}
+							>
+								Key Exchange
+							</Button>
+						</Box>
+						<TabContext value={tab}>
+							<TabList
+								variant="fullWidth"
+								onChange={(event: React.SyntheticEvent, newValue: string) => {
+									setTab(newValue);
+								}}
+								aria-label="lab API tabs example"
+							>
+								<Tab label="Chats" value="chat" />
+								<Tab label="Requests" value="request" />
+							</TabList>
+							<TabPanel
+								value="chat"
+								sx={{
+									padding: '10px 0px 0px 0px',
+								}}
+							>
+								<ChatSessionListComponent
+									selectedChat={selectedChat}
+									setSelectedChat={setSelectedChat}
+									setDrawerOpen={setDrawerOpen}
+								/>
+							</TabPanel>
+							<TabPanel
+								value="request"
+								sx={{
+									padding: '10px 0px 0px 0px',
+								}}
+							>
+								<ChatRequestListComponent
+									selectedChat={selectedChat}
+									setSelectedChat={setSelectedChat}
+								/>
+							</TabPanel>
+						</TabContext>
+					</Box>
+				</Drawer>
 
-			<Grid container spacing={0}>
 				<Grid
 					item
 					xs={3}
-					sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}
+					sx={{ display: { xs: 'none', sm: 'block', md: 'block' } }}
 				>
 					<Box
 						sx={{

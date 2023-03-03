@@ -18,6 +18,7 @@ import GeneralNotificationComponent from './GeneralNotificationComponent';
 const ChatSessionListComponent: any = ({
 	selectedChat,
 	setSelectedChat,
+	setDrawerOpen,
 }: any) => {
 	const [errorChat, setErrorChat] = useState(false);
 	const [chats, setChats]: any = useState([]);
@@ -57,6 +58,7 @@ const ChatSessionListComponent: any = ({
 				}
 			}
 		});
+		setDrawerOpen(false);
 	};
 
 	return (
