@@ -115,7 +115,7 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 						id="messageBody"
 						sx={{
 							width: '100%',
-							height: 'calc(100vh - 40px - 64px)',
+							height: 'calc((var(--vh, 1vh) * 100) - 40px - 64px)',
 							overflow: 'auto',
 						}}
 						justifyContent="flex-end"

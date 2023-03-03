@@ -42,6 +42,15 @@ const root = ReactDOM.createRoot(
 	}, 10000);
 })();
 
+// Set mobile VH
+const vh = window.innerHeight * 0.01;
+document.documentElement.style.setProperty('--vh', `${vh}px`);
+
+// visualViewport?.addEventListener('resize', (event: any) => {
+// 	const vh = event?.target?.height * 0.01;
+// 	document.documentElement.style.setProperty('--vh', `${vh}px`);
+// });
+
 root.render(
 	<React.StrictMode>
 		<BrowserRouter>

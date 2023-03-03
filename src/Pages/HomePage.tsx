@@ -52,7 +52,7 @@ const HomePage: any = ({ drawerOpen, setDrawerOpen }: any) => {
 					<Box
 						sx={{
 							width: '60vw',
-							height: 'calc(100vh - 64px)',
+							height: 'calc((var(--vh, 1vh) * 100) - 64px)',
 							borderRight: '1px solid LightGrey',
 							overflow: 'auto',
 						}}
@@ -136,7 +136,7 @@ const HomePage: any = ({ drawerOpen, setDrawerOpen }: any) => {
 					<Box
 						sx={{
 							width: '100%',
-							height: 'calc(100vh - 64px)',
+							height: 'calc((var(--vh, 1vh) * 100) - 64px)',
 							borderRight: '1px solid LightGrey',
 							overflow: 'auto',
 						}}

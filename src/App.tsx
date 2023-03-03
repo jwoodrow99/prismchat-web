@@ -82,7 +82,7 @@ function App() {
 		<div className="App">
 			<Box
 				sx={{
-					maxHeight: '100vh',
+					maxHeight: 'calc(var(--vh, 1vh) * 100)',
 				}}
 			>
 				{/* App Bar */}
