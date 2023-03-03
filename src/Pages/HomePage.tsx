@@ -130,6 +130,7 @@ const HomePage: any = ({ drawerOpen, setDrawerOpen }: any) => {
 				<Grid
 					item
 					xs={4}
+					sm={3}
 					sx={{ display: { xs: 'none', sm: 'block', md: 'block' } }}
 				>
 					<Box
