@@ -31,6 +31,7 @@ import LoginPage from './Pages/AboutPage';
 
 function App() {
 	// State
+	const [drawerOpen, setDrawerOpen] = useState(true);
 	const [identityPublicKey, setIdentityPublickey] = useState(null);
 	const [openSetup, setOpenSetup] = useState(false);
 	const [openQR, setOpenQR] = useState(false);
@@ -94,6 +95,9 @@ function App() {
 							color="inherit"
 							aria-label="menu"
 							sx={{ mr: 2 }}
+							onClick={() => {
+								setDrawerOpen(!drawerOpen);
+							}}
 						>
 							<MenuIcon />
 						</IconButton>
@@ -196,8 +200,12 @@ function App() {
 
 				{/* Route pages */}
 				<Routes>
-					<Route path="/" element={<HomePage />} />
-					<Route path="/about" element={<LoginPage />} />
+					<Route
+						path="/"
+						element={
+							<HomePage drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
+						}
+					/>
 				</Routes>
 			</Box>
 		</div>
