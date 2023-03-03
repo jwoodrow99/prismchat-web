@@ -32,7 +32,7 @@ const QrDialogueComponent: any = ({ open, setOpen }: any) => {
 				<DialogContent>
 					<Box
 						sx={{
-							maxWidth: '200px',
+							maxWidth: '300px',
 						}}
 					>
 						<img src={qrUri} alt="Generated QR Public Identity key." />
