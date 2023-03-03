@@ -19,6 +19,7 @@
     "dexie": "^3.2.3",
     "dexie-react-hooks": "^1.1.1",
     "prismchat-lib": "^0.4.0",
+    "qrcode": "^1.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.1",
@@ -51,6 +52,7 @@
     ]
   },
   "devDependencies": {
+    "@types/qrcode": "^1.5.0",
     "assert": "^2.0.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",

@@ -16,7 +16,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Tooltip from '@mui/material/Tooltip';
 
+import QrCode2Icon from '@mui/icons-material/QrCode2';
+import KeyIcon from '@mui/icons-material/Key';
+
+import QrDialogueComponent from './Components/QrDialogueComponent';
 import GeneralNotificationComponent from './Components/GeneralNotificationComponent';
 
 import HomePage from './Pages/HomePage';
@@ -28,6 +33,7 @@ function App() {
 	// State
 	const [identityPublicKey, setIdentityPublickey] = useState(null);
 	const [openSetup, setOpenSetup] = useState(false);
+	const [openQR, setOpenQR] = useState(false);
 	const [keysFoundNotify, setKeysFoundNotify] = useState(false);
 	const [copyIdentityKeyNotify, setCopyIdentityKeyNotify] = useState(false);
 
@@ -117,7 +123,29 @@ function App() {
 								setCopyIdentityKeyNotify(true);
 							}}
 						>
-							{identityPublicKey}
+							<Box sx={{ display: { xs: 'none', sm: 'block', md: 'block' } }}>
+								{identityPublicKey}
+							</Box>
+							<Box sx={{ display: { xs: 'block', sm: 'none', md: 'none' } }}>
+								<Tooltip title="Copy identity key">
+									<KeyIcon />
+								</Tooltip>
+							</Box>
+						</Box>
+						<Box
+							sx={{
+								marginLeft: '10px',
+								'&:hover': {
+									cursor: 'pointer',
+								},
+							}}
+							onClick={() => {
+								setOpenQR(true);
+							}}
+						>
+							<Tooltip title="Show identity key QR">
+								<QrCode2Icon />
+							</Tooltip>
 						</Box>
 					</Toolbar>
 				</AppBar>
@@ -148,6 +176,8 @@ function App() {
 						</Button>
 					</DialogActions>
 				</Dialog>
+
+				<QrDialogueComponent open={openQR} setOpen={setOpenQR} />
 
 				{/* Notifications */}
 				<GeneralNotificationComponent
