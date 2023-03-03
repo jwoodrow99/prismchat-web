@@ -10,6 +10,8 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
+import SendIcon from '@mui/icons-material/Send';
+
 // import styles from './AboutPage.module.css';
 
 const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
@@ -175,7 +177,7 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 						}}
 					>
 						<Grid container spacing={0}>
-							<Grid item xs={10}>
+							<Grid item xs={9}>
 								<TextField
 									fullWidth
 									variant="outlined"
@@ -192,7 +194,7 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 									}}
 								/>
 							</Grid>
-							<Grid item xs={2}>
+							<Grid item xs={3}>
 								<Button
 									fullWidth
 									variant="contained"
@@ -201,7 +203,7 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 										setNewMessageText('');
 									}}
 								>
-									Send
+									<SendIcon />
 								</Button>
 							</Grid>
 						</Grid>
