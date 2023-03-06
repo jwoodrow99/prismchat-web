@@ -134,15 +134,24 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 										<Box
 											key={message.id}
 											sx={{
-												backgroundColor: 'DodgerBlue',
-												color: 'white',
-												borderRadius: '10px',
-												margin: '5px 10px 5px 100px',
-												padding: '12px 30px',
-												width: 'auto',
+												display: 'flex',
+												justifyContent: 'flex-end',
 											}}
 										>
-											{message.data}
+											<Box
+												sx={{
+													backgroundColor: 'DodgerBlue',
+													color: 'white',
+													borderRadius: '20px 20px 0px 20px',
+													margin: '5px 10px',
+													padding: '10px 20px',
+													width: 'fit-content',
+													maxWidth: '90%',
+													overflowWrap: 'break-word',
+												}}
+											>
+												{message.data}
+											</Box>
 										</Box>
 									);
 								} else {
@@ -150,14 +159,25 @@ const ChatWindowComponent: any = ({ selectedChat, setSelectedChat }: any) => {
 										<Box
 											key={message.id}
 											sx={{
-												backgroundColor: 'Gainsboro',
-												color: 'black',
-												borderRadius: '10px',
-												margin: '5px 100px 5px 10px',
-												padding: '10px 30px',
+												display: 'flex',
+												justifyContent: 'flex-start',
 											}}
 										>
-											{message.data}
+											<Box
+												key={message.id}
+												sx={{
+													backgroundColor: 'Gainsboro',
+													color: 'black',
+													borderRadius: '20px 20px 20px 0px',
+													margin: '5px 10px',
+													padding: '10px 20px',
+													width: 'fit-content',
+													maxWidth: '90%',
+													overflowWrap: 'break-word',
+												}}
+											>
+												{message.data}
+											</Box>
 										</Box>
 									);
 								}
