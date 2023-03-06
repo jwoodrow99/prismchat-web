@@ -37,6 +37,17 @@ const HomePage: any = ({ drawerOpen, setDrawerOpen }: any) => {
 		(async function () {})();
 	}, [selectedChat]);
 
+	const selfDestruct = async () => {
+		localStorage.removeItem('access_token');
+
+		await window.indexedDB.databases().then((r: any) => {
+			for (var i = 0; i < r.length; i++)
+				window.indexedDB.deleteDatabase(r[i].name);
+		});
+
+		window.location.reload();
+	};
+
 	return (
 		<div className="HomePage">
 			<Grid container spacing={0}>
@@ -87,6 +98,22 @@ const HomePage: any = ({ drawerOpen, setDrawerOpen }: any) => {
 								}}
 							>
 								Key Exchange
+							</Button>
+						</Box>
+						<Box
+							sx={{
+								padding: '10px 10px 0px 10px',
+							}}
+						>
+							<Button
+								fullWidth
+								variant="contained"
+								color="error"
+								onClick={() => {
+									selfDestruct();
+								}}
+							>
+								Self Destruct
 							</Button>
 						</Box>
 						<TabContext value={tab}>
@@ -171,6 +198,22 @@ const HomePage: any = ({ drawerOpen, setDrawerOpen }: any) => {
 								}}
 							>
 								Key Exchange
+							</Button>
+						</Box>
+						<Box
+							sx={{
+								padding: '10px 10px 0px 10px',
+							}}
+						>
+							<Button
+								fullWidth
+								variant="contained"
+								color="error"
+								onClick={() => {
+									selfDestruct();
+								}}
+							>
+								Self Destruct
 							</Button>
 						</Box>
 						<TabContext value={tab}>
