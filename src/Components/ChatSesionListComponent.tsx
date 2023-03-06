@@ -4,12 +4,16 @@ import { db } from '../Services/db';
 
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import ChatIcon from '@mui/icons-material/Chat';
 import Badge from '@mui/material/Badge';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import GeneralNotificationComponent from './GeneralNotificationComponent';
 
@@ -61,40 +65,57 @@ const ChatSessionListComponent: any = ({
 		setDrawerOpen(false);
 	};
 
+	const deleteChat = async (pubkey: any) => {
+		await db.chat.where('pubkey').equals(pubkey).delete();
+		await db.message.where('pubkey').equals(pubkey).delete();
+	};
+
 	return (
 		<div className="ChatSessionListComponent">
 			<Box justifyContent="flex-end" alignItems="flex-end">
 				<List dense={true}>
 					{chats?.map((chat: any) => (
-						<ListItemButton
+						<ListItem
 							selected={selectedChat.pubkey === chat.pubkey ? true : false}
 							key={chat.pubkey}
-							onClick={() => {
-								selectChat(chat.pubkey);
-							}}
+							secondaryAction={
+								<IconButton
+									onClick={() => {
+										deleteChat(chat.pubkey);
+									}}
+								>
+									<DeleteIcon />
+								</IconButton>
+							}
 						>
-							<ListItemAvatar>
-								<Avatar>
-									<ChatIcon />
-								</Avatar>
-							</ListItemAvatar>
+							<ListItemButton
+								onClick={() => {
+									selectChat(chat.pubkey);
+								}}
+							>
+								<ListItemAvatar>
+									<Avatar>
+										<ChatIcon />
+									</Avatar>
+								</ListItemAvatar>
 
-							{chat.newMessage && (
-								<Badge color="primary" variant="dot">
+								{chat.newMessage && (
+									<Badge color="primary" variant="dot">
+										<ListItemText
+											primary={chat.name.substring(0, 20)}
+											secondary={!chat.receiveKey && 'Requested'}
+										/>
+									</Badge>
+								)}
+
+								{!chat.newMessage && (
 									<ListItemText
 										primary={chat.name.substring(0, 20)}
 										secondary={!chat.receiveKey && 'Requested'}
 									/>
-								</Badge>
-							)}
-
-							{!chat.newMessage && (
-								<ListItemText
-									primary={chat.name.substring(0, 20)}
-									secondary={!chat.receiveKey && 'Requested'}
-								/>
-							)}
-						</ListItemButton>
+								)}
+							</ListItemButton>
+						</ListItem>
 					))}
 				</List>
 			</Box>
